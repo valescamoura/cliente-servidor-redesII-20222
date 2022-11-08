@@ -17,10 +17,10 @@ Esta parte da aplicação conta com um módulo servidor onde estarão relacionad
 | NOME  | ENDEREÇO IP   | PORTA |
 | ------- | -------- | -------- |
 | João   | 192.168.0.101  | 6000 |  
-| Maria   | Texto192.168.0.121    | 6050 |
+| Maria   | 192.168.0.121    | 6050 |
 
 ## Inicialização e registro do cliente:
-
+ 
 - Uma vez iniciado o servidor de registro, ele fica aguardando pedidos de conexão dos clientes.
 - A aplicação cliente depois de inicializada e estabelecida a conexão com o servidor de registro, envia uma mensagem de registro informando o seu nome, IP e porta.
 - Quando o servidor recebe os dados do novo usuário:
@@ -71,3 +71,14 @@ Esta parte da aplicação conta com um módulo servidor onde estarão relacionad
 - Também, caso receba um convite de ligação e já esteja em uma conversa com outro cliente, não é mostrado o convite ao usuário e envia uma “resposta_ao_convite” com a palavra “rejeitado”, assim quem inicia a ligação é notificado de que o usuário destino está ocupado. A mensagem “resposta_ao_convite” é enviada usando os dados de endereço recebidos no “convite”. 
 - Quando um usuário deseja encerrar a ligação envia uma mensagem “encerrar_ligação” para o cliente da aplicação de ligação e para de transmitir áudio.
 - Quando recebe a mensagem “encerrar_ligação”, para a transmissão de áudio.
+
+# Configuração do ambiente:
+
+- Criação do ambiente virtual:
+  - ```virtualenv venv```
+- Ativação do ambiente virtual:
+  - ```source venv/bin/activate```
+- Desativação do ambiente virtual:
+  - ```deactivate```
+- Instalação dos requisitos:
+  - ```pip install -r requirements.txt```
