@@ -2,9 +2,12 @@ import socket
 
 from server import Server 
 
+clients = []
+
 def client_usecase(data):
-    print(data)
-    pass
+    print('robson : ' + str(data))
+    
+    return 'ablabluble'
 
 def main():
     s = Server()

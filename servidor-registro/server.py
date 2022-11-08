@@ -24,15 +24,14 @@ class Server:
             Client, address = self.server_side_socket.accept()
             print('Connected to: ' + address[0] + ':' + str(address[1]))
             start_new_thread(self.client_message_handler, (Client, client_usecase))
-            ThreadCount += 1
-            print('Thread Number: ' + str(ThreadCount))
+            self.threadCount += 1
+            print('Thread Number: ' + str(self.threadCount))
 
     def client_message_handler(self, connection, client_usecase):
         connection.send(str.encode('Server is working:'))
         while True:
             data = connection.recv(2048)
-            client_usecase(data)
-            response = 'Server message: ' + data.decode('utf-8')
+            response = client_usecase(data.decode('utf-8'))
             print("Received server data: " + data.decode('utf-8'))
             if not data:
                 break
@@ -41,3 +40,5 @@ class Server:
 
     def close(self):
         self.server_side_socket.close()
+
+# /Users/victor.faria/Documents/uff/cliente-servidor-redesII-20222/servidor-registro
