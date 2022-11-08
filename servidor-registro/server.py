@@ -19,18 +19,19 @@ class Server:
         print('Socket is listening..')
         self.server_side_socket.listen(5)
 
-    def run(self):
+    def run(self, client_usecase):
         while True:
             Client, address = self.server_side_socket.accept()
             print('Connected to: ' + address[0] + ':' + str(address[1]))
-            start_new_thread(self.client_message_handler, (Client, ))
+            start_new_thread(self.client_message_handler, (Client, client_usecase))
             ThreadCount += 1
             print('Thread Number: ' + str(ThreadCount))
 
-    def client_message_handler(self,connection):
+    def client_message_handler(self, connection, client_usecase):
         connection.send(str.encode('Server is working:'))
         while True:
             data = connection.recv(2048)
+            client_usecase(data)
             response = 'Server message: ' + data.decode('utf-8')
             print("Received server data: " + data.decode('utf-8'))
             if not data:
