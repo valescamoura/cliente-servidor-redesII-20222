@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 from user import User
 
 class Register:
