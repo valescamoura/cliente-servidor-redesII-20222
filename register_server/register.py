@@ -1,5 +1,5 @@
 from typing import Dict
-from user import User
+from core.user import User
 
 class Register:
     def __init__(self) -> Dict[str, User]:

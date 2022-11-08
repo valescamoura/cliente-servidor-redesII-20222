@@ -1,6 +1,6 @@
 import socket
 
-from server import Server 
+from core.server import Server 
 
 clients = []
 
