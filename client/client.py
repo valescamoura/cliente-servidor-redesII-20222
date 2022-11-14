@@ -1,4 +1,6 @@
 import socket
+import core.audio
+
 ClientMultiSocket = socket.socket()
 host = '127.0.0.1'
 port = 2004
@@ -10,7 +12,9 @@ except socket.error as e:
 res = ClientMultiSocket.recv(1024)
 while True:
     Input = input('Hey there: ')
-    ClientMultiSocket.send(str.encode(Input))
+    ClientMultiSocket.send(core.audio.record())
     res = ClientMultiSocket.recv(1024)
-    print(res.decode('utf-8'))
+    core.audio.play(res)
+    #print(res.decode('utf-8'))
+
 ClientMultiSocket.close()
