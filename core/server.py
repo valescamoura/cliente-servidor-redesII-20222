@@ -40,5 +40,3 @@ class Server:
 
     def close(self):
         self.server_side_socket.close()
-
-# /Users/victor.faria/Documents/uff/cliente-servidor-redesII-20222/servidor-registro
