@@ -6,10 +6,10 @@ class Register:
         self.table: Dict[str, User] = {}
 
     def add_user(self, user: User) -> Union[Dict[str, User], str]:
-        if user.name in self.table:
+        if user['name'] in self.table:
             return 'Usuário já registrado'
 
-        self.table[user.name] = user
+        self.table[user['name']] = user
         return 'Usuário registrado com sucesso!'
 
     def remove_user(self, user_name: str) -> Union[Dict[str, User], str]:

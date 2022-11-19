@@ -2,7 +2,7 @@ import pyaudio
 
 CHUNK = 1024
 WIDTH = 2
-CHANNELS = 2
+CHANNELS = 1
 RATE = 44100
 RECORD_SECONDS = 5
 
