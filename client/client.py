@@ -109,6 +109,7 @@ elif op == 'L':
 
 op = input('Insira uma das opções: (D) Desligar chamada ou (R) Recomeçar programa')
 
+#lógica para quando desligar a chamada ou recomeçar o programa
 # if op == 'D' and call_client is not None:
 #     is_on_call = False
 #     start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
