@@ -7,6 +7,7 @@ class Server:
         self.server_side_socket = socket.socket()
         self.port = port
         self.threadCount = 0
+        self.connection = None
         self.init_server()
 
     def init_server(self):
@@ -21,10 +22,14 @@ class Server:
         self.port = port
         print(f'Socket is listening on port {self.port} and ip {self.ip}')
 
-    def run(self, client_usecase):
+    def run(self, client_usecase, onconnect=None): # multi-threaded client
         while True:
             Client, address = self.server_side_socket.accept()
+            if onconnect is not None:
+                data = Client.recv(2048)
+                onconnect(data.decode('utf-8'), Client)
             print('Connected to: ' + address[0] + ':' + str(address[1]))
+            self.connection = Client
             start_new_thread(self.client_message_handler, (Client, client_usecase))
             self.threadCount += 1
             print('Thread Number: ' + str(self.threadCount))
