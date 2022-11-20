@@ -72,42 +72,52 @@ def receiver_use_case(data):
     # core.audio.play(data)
     return 'aa'
 
-connect_to_register('127.0.0.1', 53402)
+connect_to_register('127.0.0.1', 53921)
 
 nome = input('Insira seu nome de usuário: ')
 s = Server(port=0)
-start_new_thread(s.run, (receiver_use_case,onconnect_receiver)) # subindo servidor para receber áudio no cliente
+start_new_thread(s.run, (receiver_use_case,onconnect_receiver, False)) # subindo servidor para receber áudio no cliente
 register(nome, s.port) # cadastrando o usuário
 
-op = input('(A) - Aceitar um ligação \n (R) - Rejeitar uma ligação \n (L) - Ligar para alguém')
+while True:
+    op = input('(A) - Aceitar um ligação \n (R) - Rejeitar uma ligação \n (L) - Ligar para alguém')
 
-print(call_client)
-if op == 'A' and call_client is not None:
-    is_on_call = True
-    call_user = get_user(call_client)
+    print(call_client)
+    if op == 'A' and call_client is not None:
+        is_on_call = True
+        call_user = get_user(call_client)
 
-    connect_to_call(call_user['ip'], call_user['port'], nome)
-    start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
-    s.connection.send(json.dumps({ 'response': True }).encode('utf-8'))
-elif op == 'R':
-    is_on_call = False
-    call_client = None
-elif op == 'L':
-    is_on_call = False
-    nome_ligacao = input('Insira o nome de quem você quer ligar: ')
-
-    call_user = get_user(nome_ligacao)
-    answer = connect_to_call(call_user['ip'], call_user['port'], nome)
-    accepted = json.loads(answer)
-    if accepted['response']:
+        connect_to_call(call_user['ip'], call_user['port'], nome)
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
-    else:
-        #lógica para quando usuário não aceitar a ligação
-        pass
-    print(accepted['response'])
+        s.connection.send(json.dumps({ 'response': True }).encode('utf-8'))
+
+        op = input('Pressione qualquer tecla para finalizar a chamada:')
+        call_connect.close(socket.SHUT_RDWR)
+        s.connection.close()
+    elif op == 'R':
+        is_on_call = False
+        call_client = None
+        s.connection.send(json.dumps({ 'response': False }).encode('utf-8'))
+    elif op == 'L':
+        is_on_call = False
+        nome_ligacao = input('Insira o nome de quem você quer ligar: ')
+
+        call_user = get_user(nome_ligacao)
+        answer = connect_to_call(call_user['ip'], call_user['port'], nome)
+        accepted = json.loads(answer)
+        if accepted['response']:
+            start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
+
+            op = input('Pressione qualquer tecla para finalizar a chamada:')
+            call_connect.close()
+            s.connection.close()
+        else:
+            call_user = None
+            call_client = None
+            call_connect.shutdown(socket.SHUT_RDWR)
+            #lógica para quando usuário não aceitar a ligação
 
 
-op = input('Insira uma das opções: (D) Desligar chamada ou (R) Recomeçar programa')
 
 #lógica para quando desligar a chamada ou recomeçar o programa
 # if op == 'D' and call_client is not None:

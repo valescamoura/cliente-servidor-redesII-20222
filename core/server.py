@@ -22,8 +22,18 @@ class Server:
         self.port = port
         print(f'Socket is listening on port {self.port} and ip {self.ip}')
 
-    def run(self, client_usecase, onconnect=None): # multi-threaded client
-        while True:
+    def run(self, client_usecase, onconnect=None, multithread=True): # multi-threaded client
+        if multithread:
+            while True:
+                Client, address = self.server_side_socket.accept()
+                if onconnect is not None:
+                    data = Client.recv(2048)
+                    onconnect(data.decode('utf-8'), Client)
+                print('Connected to: ' + address[0] + ':' + str(address[1]))
+                start_new_thread(self.client_message_handler, (Client, client_usecase))
+                self.threadCount += 1
+                print('Thread Number: ' + str(self.threadCount))
+        else:
             Client, address = self.server_side_socket.accept()
             if onconnect is not None:
                 data = Client.recv(2048)
@@ -33,17 +43,19 @@ class Server:
             start_new_thread(self.client_message_handler, (Client, client_usecase))
             self.threadCount += 1
             print('Thread Number: ' + str(self.threadCount))
+                
 
     def client_message_handler(self, connection, client_usecase):
-        while True:
-            data = connection.recv(2048)
-            response = client_usecase(data)
-            print("Received server data: " + str(data))
-            if not data:
-                break
-            print('Sending data to client: ' + response)
-            connection.sendall(str.encode(response))
-        connection.close()
-
-    def close(self):
-        self.server_side_socket.close()
+        try:
+            while True:
+                data = connection.recv(2048)
+                response = client_usecase(data)
+                print("Received server data: " + str(data))
+                if not data:
+                    break
+                print('Sending data to client: ' + response)
+                connection.sendall(str.encode(response))
+            connection.close()
+        except ConnectionResetError:
+            print(f'Connection ended for port: {self.port}')
+            return None
