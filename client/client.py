@@ -1,7 +1,7 @@
 import socket
 from _thread import *
 from core.server import Server
-# import core.audio
+import core.audio
 import json
 
 register_connect = socket.socket()
@@ -60,16 +60,13 @@ def onconnect_receiver(client, connection):
 
 def sender_use_case(data):
     #call_connect.send('connect request'.encode())
-    call_connect.send('sample'.encode('utf-8'))
-    while True:
-        
-        # ClientMultiSocket.send(core.audio.record())
-    
+    while True:  
+        call_connect.send(core.audio.record())
         pass
 
 def receiver_use_case(data):
-    print(data)
-    # core.audio.play(data)
+    #print(data)
+    core.audio.play(data)
     return 'aa'
 
 connect_to_register('127.0.0.1', 53921)
