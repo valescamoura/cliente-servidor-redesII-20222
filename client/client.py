@@ -78,12 +78,8 @@ def sender_use_case(_):
         pass
 
 def receiver_use_case(data):
-    #print(data)
-    i = 0
-    while i% 30 == 0:  
-        core.audio.play(data)
-        i+=1
-        pass
+    core.audio.play(data)
+    return 'a'
 
 connect_to_register('127.0.0.1', 56340)
 

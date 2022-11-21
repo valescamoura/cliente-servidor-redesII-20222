@@ -15,18 +15,6 @@ stream = p.open(format=p.get_format_from_width(WIDTH),
                 output=True,
                 frames_per_buffer=CHUNK)
 
-print("* recording")
-
-#for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
- #   data = stream.read(CHUNK)
-  #  stream.write(data, CHUNK)
-
-print("* done")
-
-#stream.stop_stream()
-#stream.close()
-
-#p.terminate()
 
 
 def play(bytes):
