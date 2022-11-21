@@ -33,7 +33,7 @@ def connect_to_call(call_server_host, call_server_port, client_name):
     try:
         call_connect.sendto(json.dumps({ 'user': client_name }).encode('utf-8'), (call_server_host, call_server_port))
         print('awaiting for response')
-        data = call_connect.recvfrom(2048).decode('utf-8')
+        data = call_connect.recvfrom(1024).decode('utf-8')
         print('response received')
         return data
     except socket.error as e:
@@ -73,11 +73,12 @@ def sender_use_case(_):
     i = 0
     while True:  
         if i% 20 == 0:
-            call_connect.send(core.audio.record(), call_user['ip'])
+            call_connect.sendto(core.audio.record(), (call_user['ip'], call_user['port']))
         i+=1
 
 def receiver_use_case(data):
-    core.audio.play(data)
+    if data:
+        core.audio.play(data)
     return 'a'
 
 connect_to_register('127.0.0.1', 57391)
