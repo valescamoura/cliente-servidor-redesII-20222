@@ -7,9 +7,22 @@ import json
 register_connect = socket.socket()
 call_connect = socket.socket()
 is_on_call = False
+ip_address = None
 call_client = None # conectado a vc
 call_user = None # vc está tentando conectar
 print('Waiting for connection response')
+
+def get_ip():
+    global ip_address
+    dns = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    dns.connect(('8.8.8.8', 80))
+
+    ip_address = dns.getsockname()[0]
+    print(ip_address)
+    dns.close
+
+get_ip()
+
 def connect_to_register(register_server_host, register_server_port):
     try:
         register_connect.connect((register_server_host, register_server_port))
@@ -28,8 +41,6 @@ def connect_to_call(call_server_host, call_server_port, client_name):
         print(str(e))
 
 def register(client_name, port):
-
-    ip_address=socket.gethostbyname(socket.gethostname())
     register_connect.send(json.dumps({ 'op': 'register', 'body' : { 'name': client_name, 'ip': ip_address, 'port': port}}).encode('utf-8'))
     res = register_connect.recv(1024)
     print('server response: ' + res.decode('utf-8'))
@@ -58,18 +69,23 @@ def onconnect_receiver(client, connection):
         connection.send(json.dumps({ 'response': True }).encode('utf-8'))
 
 
-def sender_use_case(data):
+def sender_use_case(_):
     #call_connect.send('connect request'.encode())
-    while True:  
+    i = 0
+    while i% 30 == 0:  
         call_connect.send(core.audio.record())
+        i+=1
         pass
 
 def receiver_use_case(data):
     #print(data)
-    core.audio.play(data)
-    return 'aa'
+    i = 0
+    while i% 30 == 0:  
+        core.audio.play(data)
+        i+=1
+        pass
 
-connect_to_register('127.0.0.1', 53921)
+connect_to_register('127.0.0.1', 56340)
 
 nome = input('Insira seu nome de usuário: ')
 s = Server(port=0)
@@ -89,7 +105,7 @@ while True:
         s.connection.send(json.dumps({ 'response': True }).encode('utf-8'))
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
-        call_connect.close(socket.SHUT_RDWR)
+        call_connect.close()
         s.connection.close()
     elif op == 'R':
         is_on_call = False

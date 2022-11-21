@@ -12,7 +12,7 @@ class Server:
 
     def init_server(self):
         try:
-            self.server_side_socket.bind(('127.0.0.1', self.port))
+            self.server_side_socket.bind(('0.0.0.0', self.port))
         except socket.error as e:
             print(str(e))
         
@@ -50,11 +50,13 @@ class Server:
             while True:
                 data = connection.recv(2048)
                 response = client_usecase(data)
-                print("Received server data: " + str(data))
+                # print("Received server data: " + str(data))
                 if not data:
                     break
-                print('Sending data to client: ' + response)
-                connection.sendall(str.encode(response))
+                # print('Sending data to client: ' + str(response))
+                if response is not None:
+                    connection.sendall(data)
+                    
             connection.close()
         except ConnectionResetError:
             print(f'Connection ended for port: {self.port}')
