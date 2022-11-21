@@ -16,12 +16,12 @@ class Server:
 
     def init_server(self):
         try:
-            self.server_side_socket.bind(('0.0.0.0', self.port))
+            self.server_side_socket.bind(('0.0.0.0', self.port)) # setando ip e porta 
         except socket.error as e:
             print(str(e))
         
         if self.protocol == 'TCP': 
-            self.server_side_socket.listen(5)
+            self.server_side_socket.listen(5) # iniciando escuta
         ip, port = self.server_side_socket.getsockname()
         self.ip = ip
         self.port = port
