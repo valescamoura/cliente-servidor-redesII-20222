@@ -60,6 +60,7 @@ def get_user(client_name):
     return json.loads(res.decode('utf-8'))
 
 def onconnect_receiver(client, connection):
+    print(client)
     global call_client
     global call_user
     call_client = json.loads(client)['user']
@@ -67,20 +68,17 @@ def onconnect_receiver(client, connection):
     print('call_user: ' + str(call_user))
     print('\n')
     if call_user is not None and call_user['name'] == call_client:
-        connection.sendto(json.dumps({ 'response': True }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
     i = 0
     while True:  
-        if i% 20 == 0:
-            call_connect.sendto(core.audio.record(), (call_user['ip'], call_user['port']))
-        i+=1
+        call_connect.sendto(core.audio.record(), (call_user['ip'], call_user['port']))
 
 def receiver_use_case(data):
-    if data:
-        audio.play(data)
+    core.audio.play(data)
     return 'a'
 
 connect_to_register('192.168.0.40', 57391)
@@ -100,7 +98,7 @@ while True:
 
         #connect_to_call(call_user['ip'], call_user['port'], nome, False)
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
-        s.connection.sendto(json.dumps({ 'response': True }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        s.connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
     elif op == 'R':
