@@ -30,7 +30,7 @@ print("* done")
 
 
 def play(bytes):
-    stream.write(bytes,CHUNK)
+    stream.write(bytes,CHUNK, exception_on_underflow=False)
 
 def record():
-    return stream.read(CHUNK)
+    return stream.read(CHUNK, exception_on_overflow = False)
