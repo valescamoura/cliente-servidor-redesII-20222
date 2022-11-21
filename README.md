@@ -74,6 +74,12 @@ Esta parte da aplicação conta com um módulo servidor onde estarão relacionad
 
 # Configuração do ambiente:
 
+## Requisitos
+
+- Instalar [PyAudio](https://pypi.org/project/PyAudio/).
+  - Linux: ```sudo apt install python3-pyaudio```
+  
+## Configuração
 - Criação do ambiente virtual:
   - ```virtualenv venv```
 - Ativação do ambiente virtual:
@@ -82,3 +88,4 @@ Esta parte da aplicação conta com um módulo servidor onde estarão relacionad
   - ```deactivate```
 - Instalação dos requisitos:
   - ```pip install -r requirements.txt```
+    - Somente para Windows, caso contrário seguir instalação dos requisitos. 
