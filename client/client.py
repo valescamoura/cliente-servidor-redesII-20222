@@ -35,7 +35,7 @@ def connect_to_call(call_server_host, call_server_port, client_name, need_answer
         call_connect.sendto(json.dumps({ 'user': client_name }).encode('utf-8'), (call_server_host, call_server_port))
         print('awaiting for response')
         if need_answer: 
-            data = call_connect.recvfrom(1024).decode('utf-8')
+            data = call_connect.recvfrom(2048).decode('utf-8')
         print('response received')
         return data
     except socket.error as e:
@@ -43,19 +43,19 @@ def connect_to_call(call_server_host, call_server_port, client_name, need_answer
 
 def register(client_name, port):
     register_connect.send(json.dumps({ 'op': 'register', 'body' : { 'name': client_name, 'ip': ip_address, 'port': port}}).encode('utf-8'))
-    res = register_connect.recv(1024)
+    res = register_connect.recv(2048)
     print('server response: ' + res.decode('utf-8'))
     return res
 
 def unregister(client_name):
     register_connect.send(json.dumps({ 'op': 'unregister', 'body' : client_name}).encode('utf-8'))
-    res = register_connect.recv(1024)
+    res = register_connect.recv(2048)
     print('server response: ' + res.decode('utf-8'))
     return res
 
 def get_user(client_name):
     register_connect.send(json.dumps({ 'op': 'get_user', 'body' : client_name}).encode('utf-8'))
-    res = register_connect.recv(1024)
+    res = register_connect.recv(2048)
     print('server response: ' + res.decode('utf-8'))
     return json.loads(res.decode('utf-8'))
 
