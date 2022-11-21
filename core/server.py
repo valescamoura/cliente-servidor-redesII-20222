@@ -55,7 +55,7 @@ class Server:
                     break
                 # print('Sending data to client: ' + str(response))
                 if response is not None:
-                    connection.sendall(data)
+                    connection.sendall(str.encode(response))
                     
             connection.close()
         except ConnectionResetError:

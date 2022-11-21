@@ -75,13 +75,12 @@ def sender_use_case(_):
     while i% 30 == 0:  
         call_connect.send(core.audio.record())
         i+=1
-        pass
 
 def receiver_use_case(data):
     core.audio.play(data)
     return 'a'
 
-connect_to_register('127.0.0.1', 56340)
+connect_to_register('127.0.0.1', 57350)
 
 nome = input('Insira seu nome de usuário: ')
 s = Server(port=0)

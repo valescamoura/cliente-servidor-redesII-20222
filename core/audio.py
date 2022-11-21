@@ -1,6 +1,6 @@
 import pyaudio
 
-CHUNK = 1024
+CHUNK = 512
 WIDTH = 2
 CHANNELS = 1
 RATE = 44100
@@ -18,7 +18,8 @@ stream = p.open(format=p.get_format_from_width(WIDTH),
 
 
 def play(bytes):
-    stream.write(bytes,CHUNK, exception_on_underflow=False)
+    stream.write(bytes,CHUNK)
+    pass
 
 def record():
-    return stream.read(CHUNK, exception_on_overflow = False)
+    return stream.read(CHUNK, exception_on_overflow= False)
