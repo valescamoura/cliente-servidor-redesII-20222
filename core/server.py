@@ -39,12 +39,12 @@ class Server:
                 self.threadCount += 1
                 print('Thread Number: ' + str(self.threadCount))
         else:
+            self.connection = self.server_side_socket
             if onconnect is not None:
                 data, address = self.server_side_socket.recvfrom(1024)
                 onconnect(data.decode('utf-8'), self.server_side_socket)
                 print('Connected to: '  + address[0] + ':' + str(address[1]))
 
-            self.connection = self.server_side_socket
             start_new_thread(self.udp_client_message_handler, (self.connection, client_usecase))
             self.threadCount += 1
             print('Thread Number: ' + str(self.threadCount))

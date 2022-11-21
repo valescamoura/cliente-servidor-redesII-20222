@@ -80,10 +80,10 @@ def sender_use_case(_):
 
 def receiver_use_case(data):
     if data:
-        core.audio.play(data)
+        audio.play(data)
     return 'a'
 
-connect_to_register('127.0.0.1', 57391)
+connect_to_register('192.168.0.40', 57391)
 
 nome = input('Insira seu nome de usuário: ')
 s = Server(port=0, protocol='UDP')
@@ -100,13 +100,13 @@ while True:
 
         #connect_to_call(call_user['ip'], call_user['port'], nome, False)
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
-        s.connection.sendto(json.dumps({ 'response': True }, (call_user['ip'], call_user['port'])).encode('utf-8'))
+        s.connection.sendto(json.dumps({ 'response': True }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
     elif op == 'R':
         is_on_call = False
         call_client = None
-        s.connection.sendto(json.dumps({ 'response': False }, (call_user['ip'], call_user['port'])).encode('utf-8'))
+        s.connection.sendto(json.dumps({ 'response': False }).encode('utf-8'), (call_user['ip'], call_user['port']))
     elif op == 'L':
         is_on_call = False
         nome_ligacao = input('Insira o nome de quem você quer ligar: ')
