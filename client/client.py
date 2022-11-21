@@ -5,7 +5,7 @@ import core.audio
 import json
 
 register_connect = socket.socket()
-call_connect = socket.socket()
+call_connect = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 is_on_call = False
 ip_address = None
 call_client = None # conectado a vc
@@ -72,18 +72,19 @@ def onconnect_receiver(client, connection):
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
     i = 0
-    while i% 30 == 0:  
-        call_connect.send(core.audio.record())
+    while True:  
+        if i% 20 == 0:
+            call_connect.send(core.audio.record())
         i+=1
 
 def receiver_use_case(data):
     core.audio.play(data)
     return 'a'
 
-connect_to_register('127.0.0.1', 57350)
+connect_to_register('127.0.0.1', 57391)
 
 nome = input('Insira seu nome de usuário: ')
-s = Server(port=0)
+s = Server(port=0, protocol='UDP')
 start_new_thread(s.run, (receiver_use_case,onconnect_receiver, False)) # subindo servidor para receber áudio no cliente
 register(nome, s.port) # cadastrando o usuário
 

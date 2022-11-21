@@ -3,8 +3,11 @@ import os
 from _thread import *
 
 class Server:
-    def __init__(self, port=5000):
-        self.server_side_socket = socket.socket()
+    def __init__(self, port=5000, protocol='TCP'):
+        if protocol == 'TCP':
+            self.server_side_socket = socket.socket()
+        else:
+            self.server_side_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.port = port
         self.threadCount = 0
         self.connection = None
