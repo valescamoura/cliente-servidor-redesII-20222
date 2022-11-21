@@ -31,10 +31,9 @@ def connect_to_register(register_server_host, register_server_port):
 
 def connect_to_call(call_server_host, call_server_port, client_name):
     try:
-        call_connect.connect((call_server_host, call_server_port))
-        call_connect.send(json.dumps({ 'user': client_name }).encode('utf-8'))
+        call_connect.sendto(json.dumps({ 'user': client_name }).encode('utf-8'), (call_server_host, call_server_port))
         print('awaiting for response')
-        data = call_connect.recv(2048).decode('utf-8')
+        data = call_connect.recvfrom(2048).decode('utf-8')
         print('response received')
         return data
     except socket.error as e:
@@ -66,7 +65,7 @@ def onconnect_receiver(client, connection):
     print('call_user: ' + str(call_user))
     print('\n')
     if call_user is not None and call_user['name'] == call_client:
-        connection.send(json.dumps({ 'response': True }).encode('utf-8'))
+        connection.sendto(json.dumps({ 'response': True }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 
 def sender_use_case(_):
@@ -74,7 +73,7 @@ def sender_use_case(_):
     i = 0
     while True:  
         if i% 20 == 0:
-            call_connect.send(core.audio.record())
+            call_connect.send(core.audio.record(), call_user['ip'])
         i+=1
 
 def receiver_use_case(data):
@@ -98,15 +97,13 @@ while True:
 
         connect_to_call(call_user['ip'], call_user['port'], nome)
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
-        s.connection.send(json.dumps({ 'response': True }).encode('utf-8'))
+        s.connection.sendto(json.dumps({ 'response': True }, (call_user['ip'], call_user['port'])).encode('utf-8'))
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
-        call_connect.close()
-        s.connection.close()
     elif op == 'R':
         is_on_call = False
         call_client = None
-        s.connection.send(json.dumps({ 'response': False }).encode('utf-8'))
+        s.connection.sendto(json.dumps({ 'response': False }, (call_user['ip'], call_user['port'])).encode('utf-8'))
     elif op == 'L':
         is_on_call = False
         nome_ligacao = input('Insira o nome de quem você quer ligar: ')
@@ -118,12 +115,9 @@ while True:
             start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
             op = input('Pressione qualquer tecla para finalizar a chamada:')
-            call_connect.close()
-            s.connection.close()
         else:
             call_user = None
             call_client = None
-            call_connect.shutdown(socket.SHUT_RDWR)
             #lógica para quando usuário não aceitar a ligação
 
 
