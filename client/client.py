@@ -29,11 +29,12 @@ def connect_to_register(register_server_host, register_server_port):
     except socket.error as e:
         print(str(e))
 
-def connect_to_call(call_server_host, call_server_port, client_name):
+def connect_to_call(call_server_host, call_server_port, client_name, need_answer = True):
     try:
         call_connect.sendto(json.dumps({ 'user': client_name }).encode('utf-8'), (call_server_host, call_server_port))
         print('awaiting for response')
-        data = call_connect.recvfrom(1024).decode('utf-8')
+        if need_answer: 
+            data = call_connect.recvfrom(1024).decode('utf-8')
         print('response received')
         return data
     except socket.error as e:
@@ -96,7 +97,7 @@ while True:
         is_on_call = True
         call_user = get_user(call_client)
 
-        connect_to_call(call_user['ip'], call_user['port'], nome)
+        connect_to_call(call_user['ip'], call_user['port'], nome, False)
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
         s.connection.sendto(json.dumps({ 'response': True }, (call_user['ip'], call_user['port'])).encode('utf-8'))
 
