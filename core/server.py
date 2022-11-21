@@ -4,7 +4,8 @@ from _thread import *
 
 class Server:
     def __init__(self, port=5000, protocol='TCP'):
-        if protocol == 'TCP':
+        self.protocol = protocol
+        if self.protocol == 'TCP':
             self.server_side_socket = socket.socket()
         else:
             self.server_side_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -19,7 +20,8 @@ class Server:
         except socket.error as e:
             print(str(e))
         
-        self.server_side_socket.listen(5) # iniciando escuta
+        if self.protocol == 'TCP': 
+            self.server_side_socket.listen(5) # iniciando escuta
         ip, port = self.server_side_socket.getsockname()
         self.ip = ip
         self.port = port
@@ -30,28 +32,41 @@ class Server:
             while True:
                 Client, address = self.server_side_socket.accept()
                 if onconnect is not None:
-                    data = Client.recv(2048)
+                    data = Client.recv(1024)
                     onconnect(data.decode('utf-8'), Client)
                 print('Connected to: ' + address[0] + ':' + str(address[1]))
-                start_new_thread(self.client_message_handler, (Client, client_usecase))
+                start_new_thread(self.tcp_client_message_handler, (Client, client_usecase))
                 self.threadCount += 1
                 print('Thread Number: ' + str(self.threadCount))
         else:
-            Client, address = self.server_side_socket.accept()
             if onconnect is not None:
-                data = Client.recv(2048)
-                onconnect(data.decode('utf-8'), Client)
-            print('Connected to: ' + address[0] + ':' + str(address[1]))
-            self.connection = Client
-            start_new_thread(self.client_message_handler, (Client, client_usecase))
+                data, address = self.server_side_socket.recvfrom(1024)
+                onconnect(data.decode('utf-8'), self.server_side_socket)
+                print('Connected to: '  + address[0] + ':' + str(address[1]))
+
+            self.connection = self.server_side_socket
+            start_new_thread(self.udp_client_message_handler, (self.connection, client_usecase))
             self.threadCount += 1
             print('Thread Number: ' + str(self.threadCount))
-                
 
-    def client_message_handler(self, connection, client_usecase):
+    def udp_client_message_handler(self, connection, client_usecase):
         try:
             while True:
-                data = connection.recv(2048)
+                data, address = connection.recvfrom(1024)
+                response = client_usecase(data)
+                # print("Received server data: " + str(data))
+                if not data:
+                    break
+                # print('Sending data to client: ' + str(response))
+                    connection.sendto(str.encode(response), address)
+        except ConnectionResetError:
+            print(f'Connection ended for port: {self.port}')
+            return None           
+
+    def tcp_client_message_handler(self, connection, client_usecase):
+        try:
+            while True:
+                data = connection.recv(1024)
                 response = client_usecase(data)
                 # print("Received server data: " + str(data))
                 if not data:

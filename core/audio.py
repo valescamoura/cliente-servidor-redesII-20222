@@ -1,6 +1,6 @@
 import pyaudio
 
-CHUNK = 512
+CHUNK = 1024
 WIDTH = 2
 CHANNELS = 1
 RATE = 44100
