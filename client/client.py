@@ -64,24 +64,24 @@ def get_user(client_name):
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
     
-    while is_on_call:  
+    while is_on_call and call_user:  
         call_connect.sendto(json.dumps({'op': 'audio', 'audio': base64.b64encode(core.audio.record()).decode('utf-8')}).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 
 def receiver_use_case(data):
     global is_on_call
     r = json.loads(data.decode('utf-8'))
-    print(r)
+    print(r['op'])
     global call_client
     global call_user
     
     if r['op'] == 'control' :
         call_client = r['user']
+        print('\n receiving call from : ' + call_client)
+        print('\n call_user: ' + str(call_user))
         if call_user is not None and call_user['name'] == call_client:
-            print('receiving call from : ' + call_client)
-            print('call_user: ' + str(call_user))
             print('\n')
-            s.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+            s.connection.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
     if r['op'] == 'disable':
         is_on_call = False
         print('chamada encerrada')
@@ -91,12 +91,11 @@ def receiver_use_case(data):
 
 connect_to_register(register_server_ip, 5005)
 
-nome = input('Insira seu nome de usuário: ')
 s = Server(port=6000, protocol='UDP')
-start_new_thread(s.run, (receiver_use_case,onconnect_receiver=None, False)) # subindo servidor para receber áudio no cliente
-register(nome, s.port) # cadastrando o usuário
-
+start_new_thread(s.run, (receiver_use_case,None, False)) # subindo servidor para receber áudio no cliente
+nome = input('Insira seu nome de usuário:')
 while True:
+    register(nome, s.port) # cadastrando o usuário
     op = input('(A) - Aceitar um ligação \n (R) - Rejeitar uma ligação \n (L) - Ligar para alguém')
 
     print(call_client)
@@ -112,8 +111,8 @@ while True:
         op = input('Pressione qualquer tecla para finalizar a chamada:')
         if is_on_call:
             print("sending close")
-        call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
         is_on_call = False
+        call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
         call_client = None
         call_user = None
     elif op == 'R':
@@ -128,29 +127,35 @@ while True:
         nome_ligacao = input('Insira o nome de quem você quer ligar: ')
 
         call_user = get_user(nome_ligacao)
-        answer = connect_to_call(call_user['ip'], call_user['port'], nome)  
-        print('awaiting for response')
-        a, data = s.connection.recvfrom(1024)
-        if data[0] == call_user['ip']:
-            response = json.loads(a.decode('utf-8'))
-        print(response)
-        if data[0] == call_user['ip'] and response['response']:
-            print('accepted')
-            is_on_call = True
-            thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
+        if call_user ==  "Usu\u00e1rio n\u00e3o registrado":
+            answer = connect_to_call(call_user['ip'], call_user['port'], nome)  
+            print('awaiting for response')
+            a, data = s.connection.recvfrom(1024)
+            if data[0] == call_user['ip']:
+                response = json.loads(a.decode('utf-8'))
+            print(response)
+            if data[0] == call_user['ip'] and response['response']:
+                print('accepted')
+                is_on_call = True
+                thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
-            op = input('Pressione qualquer tecla para finalizar a chamada:')
-            if is_on_call:
-                print("sending close")
-                call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
-                is_on_call = False
-            call_client = None
-            call_user = None
-        else:
-            call_user = None
-            call_client = None
-            print('not accepted')
-            #lógica para quando usuário não aceitar a ligação
+                op = input('Pressione qualquer tecla para finalizar a chamada:')
+                if is_on_call:
+                    print("sending close")
+                    is_on_call = False
+                    call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
+
+                call_client = None
+                call_user = None
+            else:
+                call_user = None
+                call_client = None
+                print('not accepted')
+                #lógica para quando usuário não aceitar a ligação
+    unregister(nome)
+    nome = input('Insira seu nome de usuário:')
+
+        
 
 
 #lógica para quando desligar a chamada ou recomeçar o programa
