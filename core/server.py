@@ -2,6 +2,8 @@ import socket
 import os
 from _thread import *
 
+from core.constants import REGISTER_SERVER_IP
+
 class Server:
     def __init__(self, port=5000, protocol='TCP'):
         self.protocol = protocol
@@ -16,7 +18,7 @@ class Server:
 
     def init_server(self):
         try:
-            self.server_side_socket.bind(('0.0.0.0', self.port)) # setando ip e porta 
+            self.server_side_socket.bind((REGISTER_SERVER_IP, self.port)) # setando ip e porta 
         except socket.error as e:
             print(str(e))
         

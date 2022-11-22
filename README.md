@@ -6,6 +6,33 @@ Trabalho Prático de Redes de Computadores II - 2022.2
 
 Desenvolver uma aplicação baseada no paradigma cliente-servidor utilizando socket de rede.
 
+# Configuração do ambiente:
+
+## Requisitos
+
+- Instalar [PyAudio](https://pypi.org/project/PyAudio/).
+  - Linux: ```sudo apt install python3-pyaudio```
+  
+## Configuração
+- Criação do ambiente virtual:
+  - ```virtualenv venv```
+- Ativação do ambiente virtual:
+  - ```source venv/bin/activate```
+- Desativação do ambiente virtual:
+  - ```deactivate```
+- Instalação dos requisitos:
+  - ```pip install -r requirements.txt```
+    - Somente para Windows, caso contrário seguir instalação dos requisitos. 
+
+# Execução 
+
+- Configurar ```PYTHONPATH``` para apontar para raiz do projeto.
+- Executar ```./run.sh <option>```.
+  - Permissão (Linux): ```chmod +x ./run.sh```.
+  - Opções: 
+    - 1º: ```./run.sh register_server```: para executar o servidor de registro.
+    - 2º: ```./run.sh client```: para executar o cliente/servidor de voz.
+
 # Descrição geral:
 
 O trabalho prático da disciplina consiste em desenvolver uma aplicação que simula uma sala virtual de conversa, onde os diferentes usuários registrados podem realizar ligações de voz entre eles. Qualquer usuário registrado pode ligar para outro usuário registrado, permitindo somente conversação entre dois usuários. Para isso, a aplicação deve ter um módulo servidor de registros que contém uma tabela atualizada com dados dos usuários registrados.  
@@ -72,30 +99,3 @@ Esta parte da aplicação conta com um módulo servidor onde estarão relacionad
 - Quando um usuário deseja encerrar a ligação envia uma mensagem “encerrar_ligação” para o cliente da aplicação de ligação e para de transmitir áudio.
 - Quando recebe a mensagem “encerrar_ligação”, para a transmissão de áudio.
 
-# Configuração do ambiente:
-
-## Requisitos
-
-- Instalar [PyAudio](https://pypi.org/project/PyAudio/).
-  - Linux: ```sudo apt install python3-pyaudio```
-  
-## Configuração
-- Criação do ambiente virtual:
-  - ```virtualenv venv```
-- Ativação do ambiente virtual:
-  - ```source venv/bin/activate```
-- Desativação do ambiente virtual:
-  - ```deactivate```
-- Instalação dos requisitos:
-  - ```pip install -r requirements.txt```
-    - Somente para Windows, caso contrário seguir instalação dos requisitos. 
-
-
-# Execução 
-
-- Configurar ```PYTHONPATH``` para apontar para raiz do projeto.
-- Executar ```./run.sh <option>```.
-  - Permissão (Linux): ```chmod +x ./run.sh```.
-  - Opções: 
-    - ```./run.sh register_server```: para executar o servidor de registro.
-    - ```./run.sh register_server```: para executar o cliente/servidor de voz.

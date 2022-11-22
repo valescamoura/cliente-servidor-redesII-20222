@@ -18,7 +18,7 @@ def get_ip():
     dns.connect(('8.8.8.8', 80))
 
     ip_address = dns.getsockname()[0]
-    print(ip_address)
+    print(f'My ip address: {ip_address}')
     dns.close
 
 get_ip()
@@ -84,7 +84,7 @@ def receiver_use_case(data):
 connect_to_register('192.168.0.40', 57391)
 
 nome = input('Insira seu nome de usuário: ')
-s = Server(port=0, protocol='UDP')
+s = Server(port=6000, protocol='UDP')
 start_new_thread(s.run, (receiver_use_case,onconnect_receiver, False)) # subindo servidor para receber áudio no cliente
 register(nome, s.port) # cadastrando o usuário
 

@@ -35,7 +35,7 @@ def client_usecase(data: str):
         user_name = data['body']
         response = register_clients.get_user(user_name)
     elif data['op'] == 'get_users':
-        response = register_server.get_users()
+        response = register_clients.get_usernames()
     else:
         response = 'Opção não cadastrada'
 
