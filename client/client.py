@@ -72,13 +72,13 @@ def onconnect_receiver(client, connection):
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
     while is_on_call:  
-        call_connect.sendto(json.dumps({'op': 'audio', 'audio': core.audio.record()}).encode('utf-8'), (call_user['ip'], call_user['port']))
+        call_connect.sendto(json.dumps({'op': 'audio', 'audio': core.audio.record().decode('utf-8')}).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 
 def receiver_use_case(data):
     r = json.loads(data.decode('utf-8'))
     if is_on_call:
-        core.audio.play(r['audio'])
+        core.audio.play(r['audio'].encode('utf-8'))
 
 connect_to_register(register_server_ip, 5005)
 
