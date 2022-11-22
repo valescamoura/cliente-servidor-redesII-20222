@@ -35,7 +35,7 @@ def connect_to_register(register_server_host, register_server_port):
 def connect_to_call(call_server_host, call_server_port, client_name, need_answer = True):
     try:
         data = None
-        call_connect.sendto(json.dumps({ 'user': client_name }).encode('utf-8'), (call_server_host, call_server_port))
+        call_connect.sendto(json.dumps({ 'op': 'control', 'user': client_name }).encode('utf-8'), (call_server_host, call_server_port))
         return data
     except socket.error as e:
         print(str(e))
@@ -72,12 +72,13 @@ def onconnect_receiver(client, connection):
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
     while is_on_call:  
-        call_connect.sendto(core.audio.record(), (call_user['ip'], call_user['port']))
+        call_connect.sendto(json.dumps({'op': 'audio', 'audio': core.audio.record()}).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 
 def receiver_use_case(data):
+    r = json.loads(data.decode('utf-8'))
     if is_on_call:
-        core.audio.play(data)
+        core.audio.play(r['audio'])
 
 connect_to_register(register_server_ip, 5005)
 
@@ -95,8 +96,8 @@ while True:
         call_user = get_user(call_client)
 
         #connect_to_call(call_user['ip'], call_user['port'], nome, False)
-        s.connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
-        call_connect.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        s.connection.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        call_connect.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
@@ -106,13 +107,13 @@ while True:
             continue
 
         call_user = get_user(call_client)
-        s.connection.sendto(json.dumps({ 'response': False, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        s.connection.sendto(json.dumps({ 'op': 'control', 'response': False, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
     elif op == 'L':
         is_on_call = False
         nome_ligacao = input('Insira o nome de quem você quer ligar: ')
 
         call_user = get_user(nome_ligacao)
-        answer = connect_to_call(call_user['ip'], call_user['port'], nome)
+        answer = connect_to_call(call_user['ip'], call_user['port'], nome)  
         print('awaiting for response')
         a, data = s.connection.recvfrom(1024)
         if data[0] == call_user['ip']:
