@@ -102,8 +102,11 @@ while True:
         op = input('Pressione qualquer tecla para finalizar a chamada:')
     elif op == 'R':
         is_on_call = False
-        call_client = None
-        s.connection.sendto(json.dumps({ 'response': False }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        if call_client is None:
+            continue
+
+        call_user = get_user(call_client)
+        s.connection.sendto(json.dumps({ 'response': False, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
     elif op == 'L':
         is_on_call = False
         nome_ligacao = input('Insira o nome de quem você quer ligar: ')
@@ -111,12 +114,11 @@ while True:
         call_user = get_user(nome_ligacao)
         answer = connect_to_call(call_user['ip'], call_user['port'], nome)
         print('awaiting for response')
-        data = s.connection.recvfrom(1024)[1]
-        print('response received')
-        print('some answer')
-        print(data)
-        print(call_user['ip'])
+        a, data = s.connection.recvfrom(1024)
         if data[0] == call_user['ip']:
+            response = json.loads(a.decode('utf-8'))
+        print(response)
+        if data[0] == call_user['ip'] and response['response']:
             print('accepted')
             is_on_call = True
             thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente

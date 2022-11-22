@@ -15,7 +15,7 @@ class Server:
             self.server_side_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.port = port
         self.threadCount = 0
-        self.connection = None
+        self.connection = self.server_side_socket
         self.init_server()
 
     def init_server(self):
@@ -43,7 +43,6 @@ class Server:
                 self.threadCount += 1
                 print('Thread Number: ' + str(self.threadCount))
         else:
-            self.connection = self.server_side_socket
             if onconnect is not None:
                 data, address = self.server_side_socket.recvfrom(1024)
                 onconnect(data.decode('utf-8'), self.server_side_socket)
