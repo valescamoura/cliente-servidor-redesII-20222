@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Union, List
 from core.user import User
 
 class Register:
@@ -24,3 +24,6 @@ class Register:
             return self.table[user_name]
         else:
             return 'Usuário não registrado'
+
+    def get_usernames(self) -> List[str]:
+        return self.table.keys()

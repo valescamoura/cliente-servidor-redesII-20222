@@ -1,10 +1,10 @@
 import socket, pickle
 from json import loads, dumps, JSONDecodeError
-
 from register import Register
 from core.server import Server 
 from core.user import User
 from core.request import Request
+from register_server import register
 
 register_clients = Register()
 
@@ -27,13 +27,15 @@ def client_usecase(data: str):
     if data['op'] == 'register':
         user = data['body']
         response = register_clients.add_user(user)
-        # print(register_clients.table)
+        print(register_clients.table)
     elif data['op'] == 'unregister':
         user_name = data['body']
         response = register_clients.remove_user(user_name)
     elif data['op'] == 'get_user':
         user_name = data['body']
         response = register_clients.get_user(user_name)
+    elif data['op'] == 'get_users':
+        response = register_clients.get_usernames()
     else:
         response = 'Opção não cadastrada'
 

@@ -32,7 +32,7 @@ def play(bytes):
     stream_output.write(bytes,CHUNK)
     pass
 
-#Le amostras de audio da transmissão  
+# Le amostras de audio da transmissão  
 def record():
     return stream_input.read(CHUNK, exception_on_overflow= False)
 
