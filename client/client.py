@@ -63,10 +63,14 @@ def onconnect_receiver(client, connection):
     print(client)
     global call_client
     global call_user
-    call_client = json.loads(client)['user']
-    print('receiving call from : ' + call_client)
-    print('call_user: ' + str(call_user))
-    print('\n')
+    info = json.loads(client)
+    print(client)
+    call_client = info['op'] == 'control' and info['user']
+
+    if call_user is not None and call_user['name'] == call_client and info['op'] == 'control':
+        print('receiving call from : ' + call_client)
+        print('call_user: ' + str(call_user))
+        print('\n')
     if call_user is not None and call_user['name'] == call_client:
         connection.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
@@ -78,12 +82,13 @@ def sender_use_case(_):
 
 
 def receiver_use_case(data):
+    global is_on_call
     r = json.loads(data.decode('utf-8'))
     if is_on_call:
-        if r['op'] == 'disable':
-            is_on_call = False
-            print('chamada encerrada')
-
+    if r['op'] == 'disable':
+        is_on_call = False
+        print('chamada encerrada')
+    if is_on_call:
         if r['op'] == 'audio':
             core.audio.play(base64.b64decode(r['audio'].encode('utf-8')))
 
@@ -133,6 +138,7 @@ while True:
 
             op = input('Pressione qualquer tecla para finalizar a chamada:')
             if is_on_call:
+                print("sending close")
                 call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
                 is_on_call = False
             call_client = None
