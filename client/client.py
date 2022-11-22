@@ -78,7 +78,7 @@ def sender_use_case(_):
 
 
 def receiver_use_case(data):
-    r = json.loads(data.encode('utf-8'))
+    r = json.loads(data.decode('utf-8'))
     if is_on_call:
         core.audio.play(base64.b64decode(r['audio'].encode('utf-8')))
 

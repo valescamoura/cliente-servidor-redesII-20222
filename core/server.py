@@ -36,7 +36,7 @@ class Server:
             while True:
                 Client, address = self.server_side_socket.accept()
                 if onconnect is not None:
-                    data = Client.recv(2048)
+                    data = Client.recv(4096)
                     onconnect(data.decode('utf-8'), Client)
                 print('Connected to: ' + address[0] + ':' + str(address[1]))
                 start_new_thread(self.tcp_client_message_handler, (Client, client_usecase))
@@ -44,7 +44,7 @@ class Server:
                 print('Thread Number: ' + str(self.threadCount))
         else:
             if onconnect is not None:
-                data, address = self.server_side_socket.recvfrom(2048)
+                data, address = self.server_side_socket.recvfrom(4096)
                 onconnect(data.decode('utf-8'), self.server_side_socket)
                 print('Connected to: '  + address[0] + ':' + str(address[1]))
 
@@ -55,7 +55,7 @@ class Server:
     def udp_client_message_handler(self, connection, client_usecase):
         try:
             while True:
-                data, address = connection.recvfrom(2048)
+                data, address = connection.recvfrom(4096)
                 response = client_usecase(data)
                 # print("Received server data: " + str(data))
                 if not data:
@@ -68,7 +68,7 @@ class Server:
     def tcp_client_message_handler(self, connection, client_usecase):
         try:
             while True:
-                data = connection.recv(2048)
+                data = connection.recv(4096)
                 response = client_usecase(data)
                 # print("Received server data: " + str(data))
                 if not data:
