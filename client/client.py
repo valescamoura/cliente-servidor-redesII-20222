@@ -95,6 +95,7 @@ while True:
         #connect_to_call(call_user['ip'], call_user['port'], nome, False)
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
         s.connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        call_connect.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
     elif op == 'R':
