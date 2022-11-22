@@ -76,7 +76,7 @@ def sender_use_case(_):
 
 
 def receiver_use_case(data):
-    if is_on_call: 
+    if is_on_call:
         core.audio.play(data)
 
 connect_to_register(register_server_ip, 5005)
