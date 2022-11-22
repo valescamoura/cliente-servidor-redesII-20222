@@ -1,10 +1,10 @@
 import socket, pickle
 from json import loads, dumps, JSONDecodeError
-
 from register import Register
 from core.server import Server 
 from core.user import User
 from core.request import Request
+from register_server import register
 
 register_clients = Register()
 
@@ -35,7 +35,7 @@ def client_usecase(data: str):
         user_name = data['body']
         response = register_clients.get_user(user_name)
     elif data['op'] == 'get_users':
-        response = register_server.get_users()
+        response = register.get_user()
     else:
         response = 'Opção não cadastrada'
 
