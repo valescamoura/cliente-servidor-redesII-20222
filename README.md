@@ -89,3 +89,13 @@ Esta parte da aplicação conta com um módulo servidor onde estarão relacionad
 - Instalação dos requisitos:
   - ```pip install -r requirements.txt```
     - Somente para Windows, caso contrário seguir instalação dos requisitos. 
+
+
+# Execução 
+
+- Configurar ```PYTHONPATH``` para apontar para raiz do projeto.
+- Executar ```./run.sh <option>```.
+  - Permissão (Linux): ```chmod +x ./run.sh```.
+  - Opções: 
+    - ```./run.sh register_server```: para executar o servidor de registro.
+    - ```./run.sh register_server```: para executar o cliente/servidor de voz.

@@ -27,13 +27,15 @@ def client_usecase(data: str):
     if data['op'] == 'register':
         user = data['body']
         response = register_clients.add_user(user)
-        # print(register_clients.table)
+        print(register_clients.table)
     elif data['op'] == 'unregister':
         user_name = data['body']
         response = register_clients.remove_user(user_name)
     elif data['op'] == 'get_user':
         user_name = data['body']
         response = register_clients.get_user(user_name)
+    elif data['op'] == 'get_users':
+        response = register_server.get_users()
     else:
         response = 'Opção não cadastrada'
 

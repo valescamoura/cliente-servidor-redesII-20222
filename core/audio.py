@@ -13,7 +13,7 @@ p = pyaudio.PyAudio()
 # de audio analogico)
 # CHANNELS = canais de audio
 
-#Open abre uma nova transmissão de audio
+# Open abre uma nova transmissão de audio
 stream = p.open(format=p.get_format_from_width(WIDTH),
                 channels=CHANNELS,
                 rate=RATE,
@@ -22,11 +22,11 @@ stream = p.open(format=p.get_format_from_width(WIDTH),
                 frames_per_buffer=CHUNK)
 
 
-#Escreve amostras de audio na transmissão
+# Escreve amostras de audio na transmissão
 def play(bytes):
-    stream.write(bytes,CHUNK)
+    stream.write(bytes, CHUNK)
     pass
 
-#Le amostras de audio da transmissão  
+# Le amostras de audio da transmissão  
 def record():
     return stream.read(CHUNK, exception_on_overflow= False)
