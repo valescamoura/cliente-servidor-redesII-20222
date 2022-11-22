@@ -5,7 +5,7 @@ WIDTH = 2
 CHANNELS = 1
 RATE = 100000
 
-p = pyaudio.PyAudio()
+silence = chr(0)*CHUNK*CHANNELS*2 
 
 # WIDTH = largura da amostra de audio desejada em bytes
 # CHUNKS = pedaços fragmentados do audio para um melhor fluxo dos dados
@@ -29,6 +29,8 @@ stream_output = p.open(format=p.get_format_from_width(WIDTH),
 
 #Escreve amostras de audio na transmissão
 def play(bytes):
+    if bytes == '':
+        bytes = silence
     stream_output.write(bytes,CHUNK)
     pass
 
