@@ -59,20 +59,7 @@ def get_user(client_name):
     print('server response: ' + res.decode('utf-8'))
     return json.loads(res.decode('utf-8'))
 
-def onconnect_receiver(client, connection):
-    print(client)
-    global call_client
-    global call_user
-    info = json.loads(client)
-    print(client)
-    call_client = info['op'] == 'control' and info['user']
 
-    if call_user is not None and call_user['name'] == call_client and info['op'] == 'control':
-        print('receiving call from : ' + call_client)
-        print('call_user: ' + str(call_user))
-        print('\n')
-    if call_user is not None and call_user['name'] == call_client:
-        connection.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
@@ -84,6 +71,17 @@ def sender_use_case(_):
 def receiver_use_case(data):
     global is_on_call
     r = json.loads(data.decode('utf-8'))
+    print(r)
+    global call_client
+    global call_user
+    
+    if r['op'] == 'control' :
+        call_client = r['user']
+        if call_user is not None and call_user['name'] == call_client:
+            print('receiving call from : ' + call_client)
+            print('call_user: ' + str(call_user))
+            print('\n')
+            s.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
     if r['op'] == 'disable':
         is_on_call = False
         print('chamada encerrada')
@@ -95,7 +93,7 @@ connect_to_register(register_server_ip, 5005)
 
 nome = input('Insira seu nome de usuário: ')
 s = Server(port=6000, protocol='UDP')
-start_new_thread(s.run, (receiver_use_case,onconnect_receiver, False)) # subindo servidor para receber áudio no cliente
+start_new_thread(s.run, (receiver_use_case,onconnect_receiver=None, False)) # subindo servidor para receber áudio no cliente
 register(nome, s.port) # cadastrando o usuário
 
 while True:
