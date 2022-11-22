@@ -43,19 +43,19 @@ def connect_to_call(call_server_host, call_server_port, client_name, need_answer
 
 def register(client_name, port):
     register_connect.send(json.dumps({ 'op': 'register', 'body' : { 'name': client_name, 'ip': ip_address, 'port': port}}).encode('utf-8'))
-    res = register_connect.recv(1024)
+    res = register_connect.recv(2048)
     print('server response: ' + res.decode('utf-8'))
     return res
 
 def unregister(client_name):
     register_connect.send(json.dumps({ 'op': 'unregister', 'body' : client_name}).encode('utf-8'))
-    res = register_connect.recv(1024)
+    res = register_connect.recv(2048)
     print('server response: ' + res.decode('utf-8'))
     return res
 
 def get_user(client_name):
     register_connect.send(json.dumps({ 'op': 'get_user', 'body' : client_name}).encode('utf-8'))
-    res = register_connect.recv(1024)
+    res = register_connect.recv(2048)
     print('server response: ' + res.decode('utf-8'))
     return json.loads(res.decode('utf-8'))
 
@@ -118,7 +118,7 @@ while True:
         call_user = get_user(nome_ligacao)
         answer = connect_to_call(call_user['ip'], call_user['port'], nome)  
         print('awaiting for response')
-        a, data = s.connection.recvfrom(1024)
+        a, data = s.connection.recvfrom(2048)
         if data[0] == call_user['ip']:
             response = json.loads(a.decode('utf-8'))
         print(response)
