@@ -80,6 +80,10 @@ def sender_use_case(_):
 def receiver_use_case(data):
     r = json.loads(data.decode('utf-8'))
     if is_on_call:
+        if r['op'] == 'disable':
+            is_on_call = False
+            print('chamada encerrada')
+
         if r['op'] == 'audio':
             core.audio.play(base64.b64decode(r['audio'].encode('utf-8')))
 
@@ -128,8 +132,9 @@ while True:
             thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
             op = input('Pressione qualquer tecla para finalizar a chamada:')
-
-            is_on_call = False
+            if is_on_call:
+                call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
+                is_on_call = False
             call_client = None
             call_user = None
         else:
