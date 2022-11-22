@@ -1,10 +1,10 @@
 import socket, pickle
 from json import loads, dumps, JSONDecodeError
-
 from register import Register
 from core.server import Server 
 from core.user import User
 from core.request import Request
+from register_server import register
 
 register_clients = Register()
 
