@@ -84,7 +84,6 @@ def sender_use_case(_):
 def receiver_use_case(data):
     global is_on_call
     r = json.loads(data.decode('utf-8'))
-    if is_on_call:
     if r['op'] == 'disable':
         is_on_call = False
         print('chamada encerrada')
