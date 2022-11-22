@@ -80,7 +80,8 @@ def sender_use_case(_):
 def receiver_use_case(data):
     r = json.loads(data.decode('utf-8'))
     if is_on_call:
-        core.audio.play(base64.b64decode(r['audio'].encode('utf-8')))
+        if r['op'] == 'audio':
+            core.audio.play(base64.b64decode(r['audio'].encode('utf-8')))
 
 connect_to_register(register_server_ip, 5005)
 
