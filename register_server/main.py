@@ -43,7 +43,7 @@ def client_usecase(data: str):
     return dumps(response)
 
 def main():
-    register_server = Server(port=5000)
+    register_server = Server(port=5005)
     register_server.run(client_usecase)
 
 if __name__ == '__main__':

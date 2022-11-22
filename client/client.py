@@ -1,4 +1,5 @@
 import socket
+import sys
 from _thread import *
 from core.server import Server
 import core.audio
@@ -11,6 +12,8 @@ ip_address = None
 call_client = None # conectado a vc
 call_user = None # vc está tentando conectar
 print('Waiting for connection response')
+
+register_server_ip = str(sys.argv[1])
 
 def get_ip():
     global ip_address
@@ -69,7 +72,6 @@ def onconnect_receiver(client, connection):
 
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
-    i = 0
     while True:  
         call_connect.sendto(core.audio.record(), (call_user['ip'], call_user['port']))
 
@@ -77,7 +79,7 @@ def sender_use_case(_):
 def receiver_use_case(data):
     core.audio.play(data)
 
-connect_to_register('192.168.0.137', 5000)
+connect_to_register(register_server_ip, 5005)
 
 nome = input('Insira seu nome de usuário: ')
 s = Server(port=6000, protocol='UDP')
@@ -93,9 +95,9 @@ while True:
         call_user = get_user(call_client)
 
         #connect_to_call(call_user['ip'], call_user['port'], nome, False)
-        start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
         s.connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
         call_connect.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
     elif op == 'R':

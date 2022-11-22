@@ -3,7 +3,7 @@ import pyaudio
 CHUNK = 1024
 WIDTH = 2
 CHANNELS = 1
-RATE = 44100
+RATE = 100000
 
 p = pyaudio.PyAudio()
 
