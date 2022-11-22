@@ -5,7 +5,7 @@ WIDTH = 2
 CHANNELS = 1
 RATE = 100000
 
-silence = chr(0)*self.chunk*self.channels*2 
+silence = chr(0)*CHUNK*CHANNELS*2 
 
 p = pyaudio.PyAudio()
 
