@@ -11,8 +11,8 @@ class Server:
             self.server_side_socket = socket.socket()
         else:
             self.server_side_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-        self.server_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 8192)
-        self.server_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 8192)
+        self.server_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 16384)
+        self.server_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 16384)
         self.port = port
         self.threadCount = 0
         self.connection = self.server_side_socket
