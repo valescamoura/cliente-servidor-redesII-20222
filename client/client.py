@@ -69,15 +69,15 @@ def onconnect_receiver(client, connection):
     if call_user is not None and call_user['name'] == call_client:
         connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
-
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
-    while True:  
+    while is_on_call:  
         call_connect.sendto(core.audio.record(), (call_user['ip'], call_user['port']))
 
 
 def receiver_use_case(data):
-    core.audio.play(data)
+    if is_on_call: 
+        core.audio.play(data)
 
 connect_to_register(register_server_ip, 5005)
 
@@ -118,9 +118,14 @@ while True:
         print(call_user['ip'])
         if data[0] == call_user['ip']:
             print('accepted')
-            start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
+            is_on_call = True
+            thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
             op = input('Pressione qualquer tecla para finalizar a chamada:')
+
+            is_on_call = False
+            call_client = None
+            call_user = None
         else:
             call_user = None
             call_client = None
@@ -128,17 +133,7 @@ while True:
             #lógica para quando usuário não aceitar a ligação
 
 
-
 #lógica para quando desligar a chamada ou recomeçar o programa
-# if op == 'D' and call_client is not None:
-#     is_on_call = False
-#     start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
-# elif op == 'R':
-#     is_on_call = False
-#     call_client = None
-# elif op == 'L':
-#     is_on_call = False
-#     nome_ligacao = input('Insira o nome de quem você quer ligar: ')
 
 
 # ClientMultiSocket.close()
