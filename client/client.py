@@ -68,7 +68,7 @@ def onconnect_receiver(client, connection):
     print('call_user: ' + str(call_user))
     print('\n')
     if call_user is not None and call_user['name'] == call_client:
-        connection.sendto(json.dumps({ 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
+        connection.sendto(json.dumps({ 'op': 'control', 'response': True, 'user': nome }).encode('utf-8'), (call_user['ip'], call_user['port']))
 
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
