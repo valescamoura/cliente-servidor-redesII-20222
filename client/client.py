@@ -112,6 +112,12 @@ while True:
         start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
         op = input('Pressione qualquer tecla para finalizar a chamada:')
+        if is_on_call:
+            print("sending close")
+        call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
+        is_on_call = False
+        call_client = None
+        call_user = None
     elif op == 'R':
         is_on_call = False
         if call_client is None:
