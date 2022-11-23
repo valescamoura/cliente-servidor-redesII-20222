@@ -127,31 +127,30 @@ while True:
         nome_ligacao = input('Insira o nome de quem você quer ligar: ')
 
         call_user = get_user(nome_ligacao)
-        if call_user ==  "Usu\u00e1rio n\u00e3o registrado":
-            answer = connect_to_call(call_user['ip'], call_user['port'], nome)  
-            print('awaiting for response')
-            a, data = s.connection.recvfrom(1024)
-            if data[0] == call_user['ip']:
-                response = json.loads(a.decode('utf-8'))
-            print(response)
-            if data[0] == call_user['ip'] and response['response']:
-                print('accepted')
-                is_on_call = True
-                thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
+        answer = connect_to_call(call_user['ip'], call_user['port'], nome)  
+        print('awaiting for response')
+        a, data = s.connection.recvfrom(1024)
+        if data[0] == call_user['ip']:
+            response = json.loads(a.decode('utf-8'))
+        print(response)
+        if data[0] == call_user['ip'] and response['response']:
+            print('accepted')
+            is_on_call = True
+            thread_id = start_new_thread(sender_use_case, (None,)) # rotina para enviar áudio pro cliente
 
-                op = input('Pressione qualquer tecla para finalizar a chamada:')
-                if is_on_call:
-                    print("sending close")
-                    is_on_call = False
-                    call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
+            op = input('Pressione qualquer tecla para finalizar a chamada:')
+            if is_on_call:
+                print("sending close")
+                is_on_call = False
+                call_connect.sendto(json.dumps({'op': 'disable'}).encode('utf-8'), (call_user['ip'], call_user['port']))
 
-                call_client = None
-                call_user = None
-            else:
-                call_user = None
-                call_client = None
-                print('not accepted')
-                #lógica para quando usuário não aceitar a ligação
+            call_client = None
+            call_user = None
+        else:
+            call_user = None
+            call_client = None
+            print('not accepted')
+            #lógica para quando usuário não aceitar a ligação
 
         
 
