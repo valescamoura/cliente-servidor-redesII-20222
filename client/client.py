@@ -64,8 +64,11 @@ def get_user(client_name):
 def sender_use_case(_):
     #call_connect.send('connect request'.encode())
     
-    while is_on_call and call_user:  
-        call_connect.sendto(json.dumps({'op': 'audio', 'audio': base64.b64encode(core.audio.record()).decode('utf-8')}).encode('utf-8'), (call_user['ip'], call_user['port']))
+    try:
+        while is_on_call and call_user:  
+            call_connect.sendto(json.dumps({'op': 'audio', 'audio': base64.b64encode(core.audio.record()).decode('utf-8')}).encode('utf-8'), (call_user['ip'], call_user['port']))
+    except TypeError:
+        pass
 
 
 def receiver_use_case(data):
