@@ -152,8 +152,6 @@ while True:
                 call_client = None
                 print('not accepted')
                 #lógica para quando usuário não aceitar a ligação
-    unregister(nome)
-    nome = input('Insira seu nome de usuário:')
 
         
 
